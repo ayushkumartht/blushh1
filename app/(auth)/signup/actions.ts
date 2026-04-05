@@ -1,27 +1,30 @@
 'use server'
 
 import { createClient } from '@/lib/supabase/server'
-import { isAllowedCollegeDomain, validateEmail } from '@/lib/validations'
+import { signupSchema } from '@/lib/schemas'
+import { authRateLimit } from '@/lib/ratelimit'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 export async function signUp(formData: FormData) {
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-  const name = formData.get('name') as string
-
-  if (!validateEmail(email)) {
-    return { error: 'Invalid email format' }
+  const head = await headers()
+  const ip = head.get('x-forwarded-for') || '127.0.0.1'
+  
+  const { success } = await authRateLimit.limit(ip)
+  if (!success) {
+    return { error: 'Too many requests. Please try again later.' }
   }
 
-  if (!isAllowedCollegeDomain(email)) {
-    return { error: 'Only allowed college domains can register' }
+  const rawData = Object.fromEntries(formData.entries())
+  const validation = signupSchema.safeParse(rawData)
+
+  if (!validation.success) {
+    return { error: validation.error.format()._errors?.[0] || 'Invalid input' }
   }
 
-  if (password.length < 6) {
-    return { error: 'Password must be at least 6 characters' }
-  }
+  const { email, password, name } = validation.data
 
-  const supabase = createClient()
+  const supabase = await createClient()
   const { error } = await supabase.auth.signUp({
     email,
     password,

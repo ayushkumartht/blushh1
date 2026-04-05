@@ -1,3 +1,9 @@
+import createDOMPurify from 'dompurify'
+import { JSDOM } from 'jsdom'
+
+const window = new JSDOM('').window
+const DOMPurify = createDOMPurify(window)
+
 /**
  * Validates if the email belongs to an allowed college domain.
  */
@@ -8,13 +14,14 @@ export function isAllowedCollegeDomain(email: string): boolean {
 }
 
 /**
- * Sanitizes message content before storing in DB.
+ * Sanitizes any string content using DOMPurify for XSS protection.
  */
 export function sanitizeContent(content: string): string {
   if (!content) return ''
-  return content
-    .replace(/<[^>]*>?/gm, '') // Strip HTML
-    .trim()
+  return DOMPurify.sanitize(content, {
+    ALLOWED_TAGS: [], // No HTML allowed
+    KEEP_CONTENT: true,
+  }).trim()
 }
 
 /**

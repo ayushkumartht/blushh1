@@ -1,22 +1,49 @@
 -- 004_rls_policies.sql
 -- Security first. RLS policies and helper functions.
 
--- Function to check for accepted request between two users
-create or replace function public.can_see_instagram_handle(profile_id uuid)
-returns boolean
+-- Function to check for accepted request and return profile data securely
+-- This replaces raw SELECT * on profiles to prevent instagram_handle leakage
+create or replace function public.get_profile_with_reveal(target_id uuid)
+returns table (
+  id uuid,
+  name text,
+  college_name text,
+  bio text,
+  age int,
+  gender text,
+  photo_url text,
+  instagram_handle text,
+  created_at timestamptz
+)
 security definer
 set search_path = public
 as $$
 begin
-  return exists (
-    select 1 from requests
-    where status = 'accepted'
-    and (
-      (sender_id = auth.uid() and receiver_id = profile_id)
-      or
-      (receiver_id = auth.uid() and sender_id = profile_id)
-    )
-  );
+  return query
+  select 
+    p.id,
+    p.name,
+    p.college_name,
+    p.bio,
+    p.age,
+    p.gender,
+    p.photo_url,
+    case 
+      when exists (
+        select 1 from requests r
+        where r.status = 'accepted'
+        and (
+          (r.sender_id = auth.uid() and r.receiver_id = target_id)
+          or
+          (r.receiver_id = auth.uid() and r.sender_id = target_id)
+        )
+      ) then p.instagram_handle
+      else null
+    end as instagram_handle,
+    p.created_at
+  from profiles p
+  where p.id = target_id
+  and p.deleted_at is null;
 end;
 $$ language plpgsql;
 
@@ -37,11 +64,15 @@ create policy "Users can insert their own profile"
   to authenticated
   with check (auth.uid() = id);
 
+-- Profile update: user can update bio, photo, etc. but NEVER name
 create policy "Users can update their own profile"
   on public.profiles for update
   to authenticated
   using (auth.uid() = id)
-  with check (auth.uid() = id);
+  with check (
+    auth.uid() = id AND 
+    name = (select name from profiles where id = auth.uid()) -- Name immutability check
+  );
 
 -- Request Policies
 create policy "Users can see their own requests"
