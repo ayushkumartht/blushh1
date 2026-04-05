@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <circle cx="100" cy="100" r="95" fill="#b94c6a"/>
+  <!-- Double slash marks -->
+  <g stroke="#e8b0be" stroke-width="8" stroke-linecap="round" opacity="0.6">
+    <line x1="78" y1="50" x2="95" y2="90"/>
+    <line x1="92" y1="50" x2="109" y2="90"/>
+  </g>
+  <g stroke="#f5dce4" stroke-width="7" stroke-linecap="round">
+    <line x1="80" y1="52" x2="97" y2="88"/>
+    <line x1="94" y1="52" x2="111" y2="88"/>
+  </g>
+  <!-- blushhh text -->
+  <text x="100" y="135" text-anchor="middle" font-family="'Playfair Display', Georgia, serif" font-size="36" font-weight="400" fill="#fdf0f3" letter-spacing="-1">blushhh</text>
+</svg>
