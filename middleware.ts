@@ -61,15 +61,21 @@ export async function middleware(request: NextRequest) {
 
   const { data: { session } } = await supabase.auth.getSession()
 
-  // Protected routes: any route under (app)
-  // For simplicity since (app) is not a route segment, we check for paths not in auth
-  const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
-                     request.nextUrl.pathname.startsWith('/signup') || 
-                     request.nextUrl.pathname.startsWith('/verify') ||
-                     request.nextUrl.pathname.startsWith('/auth/callback')
+  try {
+    const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
+                       request.nextUrl.pathname.startsWith('/signup') || 
+                       request.nextUrl.pathname.startsWith('/verify') ||
+                       request.nextUrl.pathname.startsWith('/auth/callback')
 
-  if (!session && !isAuthPage && request.nextUrl.pathname !== '/') {
-    return NextResponse.redirect(new URL('/login', request.url))
+    if (!session && !isAuthPage && request.nextUrl.pathname !== '/') {
+      // Ensure we are redirecting to a valid absolute URL
+      const loginUrl = new URL('/login', request.url)
+      return NextResponse.redirect(loginUrl)
+    }
+  } catch (urlError) {
+    console.error('Middleware URL Parse Error:', urlError, 'Path:', request.nextUrl.pathname)
+    // Fallback to basic response if URL parsing fails for internal paths like /pipeline
+    return response
   }
 
   return response

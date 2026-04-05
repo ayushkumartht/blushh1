@@ -2,20 +2,10 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { profileSchema } from '@/lib/schemas'
-import { mutationRateLimit } from '@/lib/ratelimit'
 import { sanitizeContent } from '@/lib/validations'
 import { redirect } from 'next/navigation'
-import { headers } from 'next/headers'
 
 export async function setupProfile(formData: FormData) {
-  const head = await headers()
-  const ip = head.get('x-forwarded-for') || '127.0.0.1'
-  
-  const { success } = await mutationRateLimit.limit(ip)
-  if (!success) {
-    return { error: 'Rate limit exceeded. Please wait.' }
-  }
-
   const rawData = Object.fromEntries(formData.entries())
   const validation = profileSchema.safeParse({
     ...rawData,

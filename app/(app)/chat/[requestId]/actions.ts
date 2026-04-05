@@ -2,19 +2,10 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { messageSchema } from '@/lib/schemas'
-import { mutationRateLimit } from '@/lib/ratelimit'
 import { sanitizeContent } from '@/lib/validations'
 import { revalidatePath } from 'next/cache'
-import { headers } from 'next/headers'
 
 export async function sendMessage(requestId: string, content: string) {
-  const head = await headers()
-  const ip = head.get('x-forwarded-for') || '127.0.0.1'
-  
-  const { success } = await mutationRateLimit.limit(ip)
-  if (!success) {
-    return { error: 'Sending messages too fast. Slow down.' }
-  }
 
   const validation = messageSchema.safeParse({ content })
   if (!validation.success) {

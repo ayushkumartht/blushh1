@@ -5,128 +5,136 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
-  /* Blushhh Branding Palette */
-  --color-petal: #ffffff; /* Pure white as requested */
-  --color-blush-50: #fdf5f7; /* Very soft pink surface */
-  --color-blush-100: #f6e1e6; /* Soft border */
-  --color-blush-300: #e5a4b4; /* Medium pink */
-  --color-rose: #b94c6a; /* Logo Pink as requested */
-  --color-deep-rose: #9c3c58; /* Hover Rose */
-  --color-nude: #ffffff; /* Secondary surface also white */
-  --color-sand: #fbf8f9; /* Skeleton/Subtle surface */
+  /* Blushhh Branding Palette — Light & Minimalist */
+  --color-petal: #ffffff; 
+  --color-blush-50: #fdf5f7; 
+  --color-blush-100: #f6e1e6; 
+  --color-blush-300: #e5a4b4; 
+  --color-rose: #b94c6a; /* Brand Pink */
+  --color-deep-rose: #9c3c58; 
   --color-ink: #1a1a1a;
   --color-ink-muted: #6b5c62;
   --color-ink-ghost: #a8949b;
-  --color-success: #3d7a5a;
-  --color-danger: #b83232;
 
-  /* Typography */
+  /* Simplified Typography */
   --font-serif: "Playfair Display", Georgia, serif;
-  --font-sans: "Geist", "Inter", system-ui, sans-serif;
+  --font-sans: "Inter", "Geist", system-ui, sans-serif;
 
-  /* Strict Border Radius */
+  /* Modern Radius */
   --radius-none: 0;
-  --radius-sm: 2px;
-  --radius-default: 4px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 24px;
 }
 
 @layer base {
   :root {
     --background: var(--color-petal);
     --foreground: var(--color-ink);
-    --card: var(--color-blush-50);
-    --card-foreground: var(--color-ink);
-    --popover: var(--color-petal);
-    --popover-foreground: var(--color-ink);
-    --primary: var(--color-rose); /* Pink is primary */
+    --primary: var(--color-rose);
     --primary-foreground: var(--color-petal);
     --secondary: var(--color-blush-50);
     --secondary-foreground: var(--color-ink);
-    --muted: var(--color-sand);
-    --muted-foreground: var(--color-ink-muted);
-    --accent: var(--color-blush-50);
-    --accent-foreground: var(--color-ink);
-    --destructive: var(--color-danger);
-    --destructive-foreground: var(--color-petal);
     --border: var(--color-blush-100);
     --input: var(--color-ink);
     --ring: var(--color-rose);
   }
 
-  /* 
-    DARK MODE REMOVED PER USER REQUEST 
-  */
-
   body {
-    background-color: var(--color-petal);
+    background-color: #ffffff;
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    overflow-x: hidden;
+    padding: 2.5rem; /* Dynamic frame padding */
   }
 
-  h1, h2, h3, h4, .font-serif {
-    font-family: var(--font-serif);
-    font-weight: 400;
+  @media (max-width: 768px) {
+    body {
+      padding: 1rem;
+    }
   }
 
-  /* Underline-Only Global Input Style */
-  input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]) {
+  h1, h2, h3, h4 {
+    font-family: var(--font-sans); /* Simplified per user request */
+    font-weight: 700;
+    letter-spacing: -0.04em;
+  }
+
+  /* Ultra-minimalist input */
+  input:not([type="checkbox"]):not([type="radio"]) {
     border: none;
-    border-bottom: 2px solid var(--color-blush-100);
+    border-bottom: 1px solid var(--color-blush-100);
     background: transparent;
     border-radius: 0;
     padding-left: 0;
-    padding-right: 0;
-    transition: all 400ms cubic-bezier(0.25, 0.1, 0.25, 1);
+    transition: all 0.3s ease;
   }
 
   input:focus {
     outline: none;
     border-bottom-color: var(--color-rose);
-    box-shadow: none;
-  }
-
-  .metadata {
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-    font-size: 11px;
-    font-family: var(--font-sans);
-    color: var(--color-rose);
-    font-weight: 500;
   }
 }
 
-/* Tinder-Inspired / Editorial Animations */
+/* Animatic Transitions */
 
-@keyframes editorial-reveal {
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.96); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-@keyframes fade-up {
+@keyframes float-up {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
-.reveal-1 { animation: editorial-reveal 1s cubic-bezier(0.25, 0.1, 0.25, 1) both; }
-.reveal-2 { animation: editorial-reveal 1s cubic-bezier(0.25, 0.1, 0.25, 1) 200ms both; }
-.reveal-3 { animation: editorial-reveal 1s cubic-bezier(0.25, 0.1, 0.25, 1) 400ms both; }
+@keyframes spread-in {
+  from { letter-spacing: -0.1em; opacity: 0; }
+  to { letter-spacing: -0.04em; opacity: 1; }
+}
 
-.fade-in { animation: scale-in 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) both; }
+@keyframes slow-zoom {
+  from { transform: scale(1.05); }
+  to { transform: scale(1); }
+}
+
+.anim-float { animation: float-up 1.2s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-spread { animation: spread-in 1.4s cubic-bezier(0.16, 1, 0.3, 1) both; }
+.anim-zoom { animation: slow-zoom 3s ease-out both; }
 
 .scroll-reveal {
   opacity: 0;
-  transform: translateY(40px);
-  transition: all 1.2s cubic-bezier(0.25, 0.1, 0.25, 1);
+  transform: translateY(30px);
+  transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .scroll-reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+.grid-overlay {
+  background: radial-gradient(circle at center, transparent 0%, rgba(255,255,255,0.4) 70%, white 100%);
+}
+.page-frame {
+  position: fixed;
+  inset: 1.25rem;
+  border: 1px solid var(--color-blush-100);
+  pointer-events: none;
+  z-index: 100;
+  border-radius: 2rem;
+  transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (max-width: 768px) {
+  .page-frame {
+    inset: 0.5rem;
+    border-radius: 1rem;
+  }
+}
+
+.hover-lift {
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px -10px color-mix(in srgb, var(--color-rose), transparent 80%);
 }

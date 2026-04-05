@@ -2,22 +2,12 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { loginSchema, otpSchema, verifyOtpSchema } from '@/lib/schemas'
-import { authRateLimit } from '@/lib/ratelimit'
-import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 /**
  * Standard Password Login
  */
 export async function signIn(formData: FormData) {
-  const head = await headers()
-  const ip = head.get('x-forwarded-for') || '127.0.0.1'
-  
-  const { success } = await authRateLimit.limit(ip)
-  if (!success) {
-    return { error: 'Too many requests. Please try again later.' }
-  }
-
   const rawData = Object.fromEntries(formData.entries())
   const validation = loginSchema.safeParse(rawData)
 
@@ -44,12 +34,6 @@ export async function signIn(formData: FormData) {
  * Send Email OTP
  */
 export async function sendOtp(formData: FormData) {
-  const head = await headers()
-  const ip = head.get('x-forwarded-for') || '127.0.0.1'
-  
-  const { success } = await authRateLimit.limit(ip)
-  if (!success) return { error: 'Too many requests' }
-
   const email = formData.get('email') as string
   const validation = otpSchema.safeParse({ email })
   if (!validation.success) return { error: validation.error.format()._errors?.[0] }
@@ -71,12 +55,6 @@ export async function sendOtp(formData: FormData) {
  * Verify Email OTP Token
  */
 export async function verifyOtp(formData: FormData) {
-  const head = await headers()
-  const ip = head.get('x-forwarded-for') || '127.0.0.1'
-  
-  const { success } = await authRateLimit.limit(ip)
-  if (!success) return { error: 'Too many requests' }
-
   const email = formData.get('email') as string
   const token = formData.get('token') as string
   

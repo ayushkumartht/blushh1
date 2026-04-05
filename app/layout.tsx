@@ -1,23 +1,23 @@
 import type { Metadata } from "next";
-import { Playfair_Display, DM_Sans } from "next/font/google";
+import { Inter, Playfair_Display } from "next/font/google";
 import "./globals.css";
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600", "700"],
+});
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-serif",
-  weight: ["400", "700"],
-  style: ["normal", "italic"],
-});
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-sans",
-  weight: ["300", "400", "500"],
+  weight: ["400"],
+  style: ["italic"],
 });
 
 export const metadata: Metadata = {
   title: "blushhh | exclusive for kiet",
-  description: "editorial dating for kiet group of institutions. intimate, secure, and handcrafted.",
+  description: "minimalist dating for kiet group of institutions. intimate, secure, and handcrafted.",
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${dmSans.variable} font-sans min-h-screen bg-petal text-ink`}>
+      <body className={`${inter.variable} ${playfair.variable} font-sans min-h-screen bg-white text-ink antialiased selection:bg-rose selection:text-white`}>
         {children}
       </body>
     </html>

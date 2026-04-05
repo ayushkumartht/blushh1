@@ -2,19 +2,9 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { signupSchema } from '@/lib/schemas'
-import { authRateLimit } from '@/lib/ratelimit'
-import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 
 export async function signUp(formData: FormData) {
-  const head = await headers()
-  const ip = head.get('x-forwarded-for') || '127.0.0.1'
-  
-  const { success } = await authRateLimit.limit(ip)
-  if (!success) {
-    return { error: 'Too many requests. Please try again later.' }
-  }
-
   const rawData = Object.fromEntries(formData.entries())
   const validation = signupSchema.safeParse(rawData)
 
