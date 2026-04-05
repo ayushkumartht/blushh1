@@ -25,3 +25,16 @@ export const profileSchema = z.object({
 export const messageSchema = z.object({
   content: z.string().min(1, 'Message cannot be empty').max(2000, 'Message too long'),
 });
+
+export const otpSchema = z.object({
+  email: z.string().email('Invalid email format').refine((email) => {
+    const allowedDomains = process.env.ALLOWED_COLLEGE_DOMAINS?.split(',') || [];
+    const domain = email.split('@')[1];
+    return allowedDomains.includes(domain);
+  }, 'Only allowed college domains can register'),
+});
+
+export const verifyOtpSchema = z.object({
+  email: z.string().email(),
+  token: z.string().length(6, 'OTP must be 6 digits'),
+});

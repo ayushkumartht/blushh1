@@ -60,7 +60,8 @@ export async function middleware(request: NextRequest) {
   // For simplicity since (app) is not a route segment, we check for paths not in auth
   const isAuthPage = request.nextUrl.pathname.startsWith('/login') || 
                      request.nextUrl.pathname.startsWith('/signup') || 
-                     request.nextUrl.pathname.startsWith('/verify')
+                     request.nextUrl.pathname.startsWith('/verify') ||
+                     request.nextUrl.pathname.startsWith('/auth/callback')
 
   if (!session && !isAuthPage && request.nextUrl.pathname !== '/') {
     return NextResponse.redirect(new URL('/login', request.url))
